@@ -1,0 +1,13 @@
+Make sure you have the same bit version as your system (32 or 64 bit)
+
+1. Open the file explorer on your computer
+2. Go to your C: drive ( or whatever you have as your main drive)
+3. Open the windows folder
+4. Open the System32 folder
+5. Search for Python27.dll in System32
+6. Copy Python27.dll
+7. Go back to the windows folder
+8. Open the SysWOW64 folder
+9. Paste Python27.dll into the folder
+
+Once this is complete try running one of Golly’s example scripts to see if you have completed the installation correctly
