@@ -43,30 +43,26 @@ class Lord:
 
     def decision(self):
         """
-        33% Chance to attack, buy, or wait
+        Chance to attack, buy, or wait based on scouting
         Governs the decision mechanism of the Lords (Decision Rule)
         Lords attack the most productive land unit nearby
         """
         self.log.tracktext("Begin scouting and weighted decision")
         scoutReport = self.scouting(self.land)
-        self.log.tracktext("Scout report shows a " + str(scoutReport[0]) + "% chance of buying a knight")
-        self.log.tracktext("Scout report shows a " + str(scoutReport[1] - scoutReport[0]) +
-                                  "% chance of attacking")
         j = r.randint(0, 98)
-        if j < scoutReport[0] or scoutReport[2] == True:
+        if j < scoutReport[0]:
+            self.log.tracktext("In buying phase")
             self.log.tracknum(self.name + " is buying knights", self.combatants.getknightcount())
             if self.land.stores.getwealth() > 100:
-                self.log.tracktext("In buy phase for " + str(self.name))
                 while self.land.stores.getwealth() > 100:
                     self.buyknight()
             self.log.tracktext(str(self.name) + " now has " + str(self.combatants.getknightcount()) + " and " + str(
                 self.land.stores.getwealth()))
-        if j >= scoutReport[1]:
+        elif j >= scoutReport[1]:
             self.log.tracktext("In combat phase")
             if self.combatants.getknightcount() > 0:
                 target = self.lookforwealthyland()
-                if target is not None and \
-                                target.owner.ruler.combatants.getknightcount() < self.combatants.getknightcount():
+                if target is not None:
                     while len(target.owner.containedLand) == 0 or (target.owner.ruler.number == self.number):
                         self.land.removeattackoption(target.GRID_LOCATION.xloc, target.GRID_LOCATION.yloc)
                         target = self.lookforwealthyland()
@@ -169,6 +165,7 @@ class Lord:
             compare = WKnights.getknightcount() - LKnights.getknightcount()
             if compare > (.5 * LKnights.getknightcount()):
                 compare = .5 * LKnights.getknightcount()
+            WKnights.knightcount -= int(compare/2)
             self.log.tracktext("Loss is: " +  str(int(compare)))
             LKnights.knightcount -= int(compare)
             if LKnights.getknightcount() < 0:
@@ -189,6 +186,7 @@ class Lord:
             else:
                 report[0] += 1
                 report[1] -= 1
+                c += 1
             x += 1
         report[0] = 100 - report[0]
         report[1] = 100 - report[1]
@@ -196,6 +194,9 @@ class Lord:
             report[0] = 0
         if report[1] > 100:
             report[1] = 99
+        if report[0] > report[1]:
+            report[0] = report[1] - 2
         if c == len(fief.attackoptions):
             report[2] = True
+        self.log.tracktext("Buy num is: " + str(report[0]) + ". Attack num is: " + str(report[1]))
         return report

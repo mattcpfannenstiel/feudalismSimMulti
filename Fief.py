@@ -207,7 +207,9 @@ class Fief:
         while j < len(tempPotentialOwners):
             x = 0
             while x < len(cellList):
+                # self.log.track_popup_only("Cell list check")
                 if cellList[x].owner.ruler.number == tempPotentialOwners[j]:
+                    self.log.tracktext("Incrimenting")
                     tempPotententialOwnersNumber[j] += 1
                 x += 1
             j += 1

@@ -1,6 +1,7 @@
 from Load import Load
 from Logger import Logger
-
+import threading
+import time
 
 class Run:
     """
@@ -21,6 +22,14 @@ class Run:
             cont = self.cycle()
         self.log.track_popup_only("Simulation complete")
 
+    def thread_work(self, lord):
+        lord.log.tracktext(lord.name + " is running at: " + time.ctime(time.time()))
+        lord.land.calculatewealth()
+        lord.land.placeserf()
+        lord.land.findborders(self.board[0], self.board[3], self.board[4])
+        lord.decision()
+        lord.log.tracktext(lord.name + " is done at: " + time.ctime(time.time()))
+
     def cycle(self):
         """
         Goes through the turn for each lord for every year
@@ -35,10 +44,10 @@ class Run:
                 while lordturn < len(self.board[1]):
                     self.board[1][lordturn].dead = self.board[1][lordturn].checkifdead()
                     if not self.board[1][lordturn].dead:
-                        self.board[1][lordturn].land.calculatewealth()
-                        self.board[1][lordturn].land.placeserf()
-                        self.board[1][lordturn].land.findborders(self.board[0], self.board[3], self.board[4])
-                        self.board[1][lordturn].decision()
+                        # threadwork here
+                        self.log.tracktext("Turn")
+                        threading.Thread(target=self.thread_work(self.board[1][lordturn]))
+                        self.log.tracktext("Past thread")
                         lordturn += 1
                     else:
                         self.log.tracktext(str(self.board[1][lordturn].name) + " is defeated")
@@ -57,3 +66,4 @@ class Run:
                 c -= 1
             i += 1
         return c
+

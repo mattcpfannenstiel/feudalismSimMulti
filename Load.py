@@ -32,9 +32,9 @@ class Load:
 
             # Parameters of the simulation for testing purposes
             self.runs = self.g.getuserinputint("Enter the number of iterations", "5000")
-            self.lords = self.g.getuserinputint("Enter the number of lords that can be square rooted(Max 100)", "4")
+            self.lords = self.g.getuserinputint("Enter the number of lords that can be square rooted(Max 49)", "9")
             self.landcount = self.g.getuserinputint("Enter the number of landunits per lord that can be square rooted"
-                                                    "(Max 100)", "4")
+                                                    "(Max 100)", "9")
             self.height = math.sqrt(self.landcount) * math.sqrt(self.lords)
             self.width = math.sqrt(self.landcount) * math.sqrt(self.lords)
 
@@ -84,10 +84,6 @@ class Load:
         sidelength = int(math.sqrt(self.landcount))
         lordside = int(math.sqrt(self.lords))
         sidemod = lordside
-        if lordside < 2:
-            sidemod = lordside - 1
-        if lordside % 2 == 1:
-            sidemod += 1
 
         # Sets up landowner and state tracking map
         fmap = self.makemap(self.width, self.height)
@@ -218,7 +214,7 @@ class Load:
             if self.protected_color_check(fief, red, fief.protected_red):
                 self.log.tracktext("Red is out")
                 c += 1
-            if c > 1:
+            if c > 2:
                 self.log.tracktext("Got to end condition")
                 fief.red = red
                 fief.blue = blue
